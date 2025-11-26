@@ -44,21 +44,13 @@ export const QuestionCard = ({ question, onAnswer, selectedOption }: Props) => {
 const styles = StyleSheet.create({
     card: {
         width: width - 40,
-        height: height * 0.75, // Fixed height
+        height: height * 0.75,
         backgroundColor: 'white',
         borderRadius: 20,
         padding: 20,
         marginHorizontal: 20,
         alignItems: 'center',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-        overflow: 'hidden', // This ensures the text is cut off if it's too long
+        overflow: 'hidden',
     },
     title: {
         fontSize: 20,
