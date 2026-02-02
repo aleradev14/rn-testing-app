@@ -1,12 +1,15 @@
+import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export default function MainScreen({ navigation }) {
+export default function MainScreen() {
+    const router = useRouter();
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Driving Theory Test</Text>
             <TouchableOpacity
                 style={styles.button}
-                onPress={() => navigation.navigate('Quiz')}
+                onPress={() => router.push('/quiz')}
             >
                 <Text style={styles.buttonText}>Start Test</Text>
             </TouchableOpacity>

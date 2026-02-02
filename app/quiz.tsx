@@ -1,19 +1,23 @@
 import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
-import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BackgroundIndicator } from '../components/BackgroundIndicator';
 import { QuestionCard } from '../components/QuestionCard';
 import { QUESTIONS } from '../constants/questions';
 
-export default function QuizScreen({ navigation }) {
-    const [answers, setAnswers] = useState({});
+export default function QuizScreen() {
+    const router = useRouter();
+    const [answers, setAnswers] = useState<{ [key: number]: number }>({});
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [isSubmitReady, setIsSubmitReady] = useState(false);
 
-    const handleAnswer = (questionId, optionIndex) => {
+
+    const handleAnswer = (questionId: number, optionIndex: number) => {
         setAnswers(prev => ({ ...prev, [questionId]: optionIndex }));
     };
+
 
     useEffect(() => {
         const answeredCount = Object.keys(answers).length;
@@ -31,25 +35,22 @@ export default function QuizScreen({ navigation }) {
                 correctCount++;
             }
         });
-        navigation.replace('Result', {
-            correct: correctCount,
-            total: QUESTIONS.length
-        });
+        router.replace({ pathname: '/result', params: { correct: correctCount, total: QUESTIONS.length } });
     };
 
     const handleClose = () => {
-        navigation.goBack();
+        router.back();
     };
 
     const currentQuestion = QUESTIONS[currentQuestionIndex];
     const currentAnswer = answers[currentQuestion.id];
 
-    let status = 'none';
+    let status: 'correct' | 'incorrect' | 'none' = 'none';
     if (currentAnswer !== undefined) {
         status = currentAnswer === currentQuestion.correctAnswerIndex ? 'correct' : 'incorrect';
     }
 
-    const onViewableItemsChanged = useRef(({ viewableItems }) => {
+    const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
         if (viewableItems.length > 0) {
             setCurrentQuestionIndex(viewableItems[0].index);
         }
@@ -59,34 +60,34 @@ export default function QuizScreen({ navigation }) {
         <View style={styles.container}>
             <BackgroundIndicator status={status} />
 
-            <View style={styles.header}>
-                <TouchableOpacity
-                    onPress={isSubmitReady ? handleSubmit : handleClose}
-                    style={styles.headerButton}
-                >
-                    {isSubmitReady ? (
-                        <Text style={styles.submitText}>Submit</Text>
-                    ) : (
-                        <Ionicons name="close" size={30} color="black" />
-                    )}
-                </TouchableOpacity>
-            </View>
+                <View style={styles.header}>
+                    <TouchableOpacity
+                        onPress={isSubmitReady ? handleSubmit : handleClose}
+                        style={styles.headerButton}
+                    >
+                        {isSubmitReady ? (
+                            <Text style={styles.submitText}>Submit</Text>
+                        ) : (
+                            <Ionicons name="close" size={30} color="black" />
+                        )}
+                    </TouchableOpacity>
+                </View>
 
-            <FlashList
-                data={QUESTIONS}
-                renderItem={({ item }) => (
-                    <QuestionCard
-                        question={item}
-                        onAnswer={(idx) => handleAnswer(item.id, idx)}
-                        selectedOption={answers[item.id] ?? null}
-                    />
-                )}
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                onViewableItemsChanged={onViewableItemsChanged}
-                viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
-            />
+                <FlashList
+                    data={QUESTIONS}
+                    renderItem={({ item }) => (
+                        <QuestionCard
+                            question={item}
+                            onAnswer={(idx) => handleAnswer(item.id, idx)}
+                            selectedOption={answers[item.id] ?? null}
+                        />
+                    )}
+                    horizontal
+                    pagingEnabled
+                    showsHorizontalScrollIndicator={false}
+                    onViewableItemsChanged={onViewableItemsChanged}
+                    viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
+                />
         </View>
     );
 }
