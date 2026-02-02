@@ -8,7 +8,7 @@ import ResultScreen from './screens/ResultScreen';
 
 const Stack = createNativeStackNavigator();
 
-function App() {
+export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -36,5 +36,3 @@ function App() {
     </NavigationContainer>
   );
 }
-
-registerRootComponent(App);
